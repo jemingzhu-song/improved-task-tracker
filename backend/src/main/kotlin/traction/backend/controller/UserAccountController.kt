@@ -1,22 +1,36 @@
 package traction.backend.controller
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 import traction.backend.model.UserAccount
 import traction.backend.service.UserAccountService
+import java.lang.IllegalArgumentException
 
 @RestController
 @RequestMapping("user/account")
 class UserAccountController(
     private val userAccountService: UserAccountService
 ) {
-    @GetMapping
-    fun getUserAccount(@RequestBody userId: Long): UserAccount {
-        return userAccountService.getUserAccount(userId)
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgument(e: IllegalArgumentException): ResponseEntity<String> {
+        return ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+    }
+
+    @GetMapping("/get/{email}")
+    fun getUserAccountByEmail(@PathVariable email: String): UserAccount? {
+        var userAccount: UserAccount? = userAccountService.getUserAccountByEmail(email)
+        return userAccount
+    }
+
+    @GetMapping("/get/all")
+    fun getAllUserAccounts(): Collection<UserAccount> {
+        return userAccountService.getAllUserAccounts()
+    }
+
+    @PostMapping
+    fun createUserAccount(@RequestBody userAccount: UserAccount): UserAccount {
+        return userAccountService.createUserAccount(userAccount)
     }
 
     @PutMapping
