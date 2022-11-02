@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { NavigationBar } from './components/NavigationBar';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { HomePage } from './pages/HomePage';
 
 function App() {
   const theme = createTheme({
@@ -54,6 +55,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <NavigationBar />
           <Routes>
+            <Route path='/' element={<HomePage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/register' element={<RegisterPage />} />
           </Routes>
