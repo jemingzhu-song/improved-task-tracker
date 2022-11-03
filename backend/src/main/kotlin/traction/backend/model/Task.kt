@@ -1,6 +1,7 @@
 package traction.backend.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import traction.backend.model.enums.StatusCode
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -17,7 +18,7 @@ class Task(
 
     @Column(name = "status", nullable = false, columnDefinition = "TEXT")
     @JsonProperty("status")
-    var status: String,
+    var status: StatusCode,
 
     @Column(name = "task_description", nullable = false, columnDefinition = "TEXT")
     @JsonProperty("taskDescription")

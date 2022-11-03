@@ -11,7 +11,7 @@ export const HomePageLoggedOut = () => {
     let currentTaskList = taskList;
     currentTaskList.push({
       taskId: uuid(),
-      status: 'incomplete',
+      status: 'INCOMPLETE',
       taskDescription: 'To Do',
     });
     setTaskList([...currentTaskList]);

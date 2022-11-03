@@ -1,15 +1,11 @@
 package traction.backend.service
 
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.ExceptionHandler
 import traction.backend.datasource.UserAccountRepository
 import traction.backend.datasource.UserAccountRepositoryStub
 import traction.backend.model.UserAccount
-import traction.backend.model.UserAccountEdit
+import traction.backend.model.helper.UserAccountEdit
 import java.lang.IllegalArgumentException
-import java.util.*
 import javax.transaction.Transactional
 
 @Service
@@ -18,6 +14,13 @@ class UserAccountService(
     private val userAccountRepositoryStub: UserAccountRepositoryStub,
     private val userAccountRepository: UserAccountRepository
 ){
+    fun getUserAccountById(userId: Long): UserAccount {
+        var userAccount: UserAccount = userAccountRepository.findById(userId).orElseThrow {
+            IllegalStateException("User with userId: $userId does not exist")
+        }
+        return userAccount
+    }
+
     fun getUserAccountByEmail(email: String): UserAccount? {
         var userAccount: UserAccount? = userAccountRepository.findUserAccountByEmail(email).orElseThrow {
            IllegalStateException("User with email: $email does not exist")
@@ -48,7 +51,7 @@ class UserAccountService(
         var currentUserAccount: UserAccount = userAccountRepository.findById(userAccountEdit.userId).orElseThrow {
             IllegalStateException("User with userId: ${userAccountEdit.userId} does not exist")
         }
-        // Only update details that are different
+        // Only update details that have been provided and are different
         if (userAccountEdit.email != null && userAccountEdit.email != currentUserAccount.email) {
             currentUserAccount.email = userAccountEdit.email!!
         }
@@ -61,7 +64,6 @@ class UserAccountService(
         if (userAccountEdit.password != null && userAccountEdit.password != currentUserAccount.password) {
             currentUserAccount.password = userAccountEdit.password!!
         }
-        return
     }
 
     fun deleteUserAccount(email: String): Unit {
@@ -72,6 +74,10 @@ class UserAccountService(
         if (userId == null) {
             throw IllegalStateException("User with email: $email does not have a user_id")
         }
-        return userAccountRepository.deleteById(userId)
+        userAccountRepository.deleteById(userId)
+    }
+
+    fun deleteAllUserAccounts(): Unit {
+        userAccountRepository.deleteAll()
     }
 }

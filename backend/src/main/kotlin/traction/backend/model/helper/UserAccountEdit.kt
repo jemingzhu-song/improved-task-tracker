@@ -1,6 +1,7 @@
-package traction.backend.model
+package traction.backend.model.helper
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import traction.backend.model.Task
 
 class UserAccountEdit(
     @JsonProperty("userId")

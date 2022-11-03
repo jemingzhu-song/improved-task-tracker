@@ -14,6 +14,7 @@ export const RegisterPage = () => {
       lastName: lastName,
       email: email,
       password: password,
+      tasks: [],
     };
 
     const requestOptions = {
@@ -25,7 +26,7 @@ export const RegisterPage = () => {
       body: JSON.stringify(registerDetails),
     };
 
-    const response = await fetch('/auth/register', requestOptions);
+    const response = await fetch('/user/account', requestOptions);
 
     if (response.status === 200) {
       console.log('Success');

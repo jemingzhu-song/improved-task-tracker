@@ -7,9 +7,9 @@ import traction.backend.model.UserAccount
 class UserAccountRepositoryStub {
 
     private val sampleUserAccountDatabase: MutableList<UserAccount> = mutableListOf(
-        UserAccount(832L, "John", "Kim", "john.kim@gmail.com", "johnny43612", emptyList()),
-        UserAccount(113L, "Alison", "Chen", "alison123@gmail.com", "cookiesilove82", emptyList()),
-        UserAccount(2332L, "Charles", "Zhou", "charles_zhou@gmail.com", "charlesrulesall333", emptyList()),
+        UserAccount(832L, "John", "Kim", "john.kim@gmail.com", "johnny43612", mutableListOf()),
+        UserAccount(113L, "Alison", "Chen", "alison123@gmail.com", "cookiesilove82", mutableListOf()),
+        UserAccount(2332L, "Charles", "Zhou", "charles_zhou@gmail.com", "charlesrulesall333", mutableListOf()),
     )
 
     fun getUserAccount(userId: Long): UserAccount {

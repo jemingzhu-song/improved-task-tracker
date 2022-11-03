@@ -1,6 +1,7 @@
 package traction.backend.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import traction.backend.model.helper.TaskEdit
 import javax.persistence.*
 
 @Entity(name = "UserAccount")
@@ -11,7 +12,7 @@ class UserAccount(
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id", updatable = false) // @Column for mapping this Property Name with Database Table Column Name
     @JsonProperty("userId")
-    var userId: Long?,
+    var userId: Long,
 
     @Column(name = "first_name", nullable = false, columnDefinition = "TEXT")
     @JsonProperty("firstName")
@@ -31,7 +32,7 @@ class UserAccount(
 
     @JsonProperty("tasks")
     @OneToMany(cascade = arrayOf(CascadeType.ALL))
-    var tasks: Collection<Task>
+    @JoinColumn(name = "user_id")
+    var tasks: MutableList<Task>
 ) {
-
 }

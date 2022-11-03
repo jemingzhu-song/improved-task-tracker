@@ -22,7 +22,7 @@ export const TaskBox = ({
   };
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStatus(event.target.checked ? 'complete' : 'incomplete');
+    setStatus(event.target.checked ? 'COMPLETE' : 'INCOMPLETE');
   };
 
   return (
@@ -40,7 +40,7 @@ export const TaskBox = ({
       <Box>
         <Checkbox
           color='success'
-          checked={status === 'incomplete' ? false : true}
+          checked={status === 'INCOMPLETE' ? false : true}
           onChange={handleCheckboxChange}
         ></Checkbox>
       </Box>
