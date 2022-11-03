@@ -11,7 +11,7 @@ class UserAccount(
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id", updatable = false) // @Column for mapping this Property Name with Database Table Column Name
     @JsonProperty("userId")
-    var userId: Long,
+    var userId: Long?,
 
     @Column(name = "first_name", nullable = false, columnDefinition = "TEXT")
     @JsonProperty("firstName")

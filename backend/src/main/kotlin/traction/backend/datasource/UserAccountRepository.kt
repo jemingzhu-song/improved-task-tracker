@@ -11,4 +11,7 @@ public interface UserAccountRepository: JpaRepository<UserAccount, Long> {
 
     @Query(value = "SELECT * FROM user_account u WHERE u.email = ?1", nativeQuery = true)
     fun findUserAccountByEmail(email: String): Optional<UserAccount>
+
+    @Query(value = "SELECT u.user_id FROM user_account u WHERE u.email = ?1", nativeQuery = true)
+    fun findUserIdByEmail(email: String): Optional<Long>
 }
