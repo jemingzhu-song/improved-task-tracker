@@ -1,9 +1,9 @@
-package traction.backend.model.helper
+package traction.backend.model.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import traction.backend.model.Task
 
-class UserAccountEdit(
+class UserAccountEditDTO(
     @JsonProperty("userId")
     val userId: Long,
 

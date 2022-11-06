@@ -1,4 +1,4 @@
-package traction.backend.datasource
+package traction.backend.datasource.stub
 
 import org.springframework.stereotype.Repository
 import traction.backend.model.UserAccount

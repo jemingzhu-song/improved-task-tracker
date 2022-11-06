@@ -1,10 +1,9 @@
-package traction.backend.model.helper
+package traction.backend.model.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import traction.backend.model.enums.StatusCode
-import javax.persistence.Column
 
-class TaskEdit(
+class TaskEditDTO(
     @JsonProperty("taskId")
     var taskId: Long,
 

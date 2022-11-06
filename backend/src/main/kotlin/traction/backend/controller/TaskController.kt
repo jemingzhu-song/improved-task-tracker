@@ -1,12 +1,11 @@
 package traction.backend.controller
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
-import org.springframework.boot.json.JsonParseException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import traction.backend.model.Task
-import traction.backend.model.helper.TaskEdit
+import traction.backend.model.dto.TaskEditDTO
 import traction.backend.service.TaskService
 import java.lang.IllegalArgumentException
 
@@ -46,8 +45,8 @@ class TaskController(
     }
 
     @PutMapping("/edit/{userId}")
-    fun editUserTask(@PathVariable userId: Long, @RequestBody taskEdit: TaskEdit): Unit {
-        return taskService.editUserTask(userId, taskEdit)
+    fun editUserTask(@PathVariable userId: Long, @RequestBody taskEditDTO: TaskEditDTO): Unit {
+        return taskService.editUserTask(userId, taskEditDTO)
     }
 
     @DeleteMapping("/delete/{userId}/{taskId}")

@@ -5,7 +5,7 @@ import traction.backend.datasource.TaskRepository
 import traction.backend.datasource.UserAccountRepository
 import traction.backend.model.Task
 import traction.backend.model.UserAccount
-import traction.backend.model.helper.TaskEdit
+import traction.backend.model.dto.TaskEditDTO
 import java.lang.IllegalStateException
 import javax.transaction.Transactional
 
@@ -30,18 +30,18 @@ class TaskService(
         userAccount.tasks.add(task)
     }
 
-    fun editUserTask(userId: Long, taskEdit: TaskEdit): Unit {
+    fun editUserTask(userId: Long, taskEditDTO: TaskEditDTO): Unit {
         var userAccount: UserAccount = userAccountRepository.findById(userId).orElseThrow {
             IllegalStateException("User with userId: $userId does not exist")
         }
-        var currentTask: Task = userAccount.tasks.first { it.taskId == taskEdit.taskId }
-        var currentTaskIndex: Int = userAccount.tasks.indexOfFirst { it.taskId == taskEdit.taskId }
+        var currentTask: Task = userAccount.tasks.first { it.taskId == taskEditDTO.taskId }
+        var currentTaskIndex: Int = userAccount.tasks.indexOfFirst { it.taskId == taskEditDTO.taskId }
         // Only update details that have been provided and are different
-        if (taskEdit.status != null && taskEdit.status != currentTask.status) {
-            currentTask.status = taskEdit.status!!
+        if (taskEditDTO.status != null && taskEditDTO.status != currentTask.status) {
+            currentTask.status = taskEditDTO.status!!
         }
-        if (taskEdit.taskDescription != null && taskEdit.taskDescription != currentTask.taskDescription) {
-            currentTask.taskDescription = taskEdit.taskDescription!!
+        if (taskEditDTO.taskDescription != null && taskEditDTO.taskDescription != currentTask.taskDescription) {
+            currentTask.taskDescription = taskEditDTO.taskDescription!!
         }
         // "currentTask" has now been updated. Now update the database
         userAccount.tasks.set(currentTaskIndex, currentTask)
