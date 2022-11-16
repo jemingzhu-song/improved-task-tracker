@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: improved_task_tracker_frontend_c
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+  backend:
+    build: ./backend
+    container_name: improved_task_tracker_backend_c
+    ports:
+      - '5050:5050'
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/improved_task_tracker_db
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=password123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  db:
+    image: 'postgres:14.6'
+    container_name: improved_task_tracker_db_c
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=improved_task_tracker_db
