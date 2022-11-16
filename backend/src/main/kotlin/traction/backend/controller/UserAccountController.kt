@@ -1,21 +1,34 @@
 package traction.backend.controller
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.JWTVerifier
+import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.DecodedJWT
 import org.apache.coyote.Response
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import traction.backend.model.UserAccount
 import traction.backend.model.dto.LoginDTO
 import traction.backend.model.dto.UserAccountEditDTO
+import traction.backend.service.AuthenticationService
 import traction.backend.service.UserAccountService
+import java.lang.Exception
 import java.lang.IllegalArgumentException
+import java.lang.RuntimeException
+import java.util.*
 import javax.security.auth.login.FailedLoginException
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("user/account")
 class UserAccountController(
-    private val userAccountService: UserAccountService
+    private val userAccountService: UserAccountService,
+    private val authenticationService: AuthenticationService
 ) {
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgument(e: IllegalArgumentException): ResponseEntity<String> {
@@ -32,22 +45,20 @@ class UserAccountController(
         return ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
     }
 
-    @PostMapping("/login")
-    fun loginUserAccount(@RequestBody loginDetails: LoginDTO, httpServletResponse: HttpServletResponse): UserAccount {
-        return userAccountService.loginUserAccount(loginDetails, httpServletResponse)
+    @ExceptionHandler(RuntimeException::class)
+    fun handleRuntimeException(e: RuntimeException): ResponseEntity<String> {
+        return ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
     }
 
     @PostMapping("/logout")
-    fun logoutUserAccount(httpServletResponse: HttpServletResponse): ResponseEntity<Any> {
-        return userAccountService.logoutUserAccount(httpServletResponse)
+    fun logoutUserAccount(@RequestHeader(value = "token") token: String): ResponseEntity<Any> {
+        return authenticationService.logoutUserAccount(token)
     }
 
-    @GetMapping("/authenticate")
-    fun authenticateUser(@CookieValue("token") token: String?): ResponseEntity<Any> {
-        println("========== $token")
-        return userAccountService.authenticateUser(token)
+    @GetMapping("/token/refresh")
+    fun refreshUserAccountToken(request: HttpServletRequest, response: HttpServletResponse): Unit {
+        return authenticationService.refreshUserAccountToken(request, response)
     }
-
     @GetMapping("/get/account/id/{userId}")
     fun getUserAccountById(@PathVariable userId: Long): UserAccount {
         return userAccountService.getUserAccountById(userId)

@@ -2,13 +2,11 @@ package traction.backend.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import traction.backend.model.enums.StatusCode
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import java.util.Date
+import javax.persistence.*
 
 @Entity(name = "Task")
+@Table(name = "task")
 class Task(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,6 +20,10 @@ class Task(
 
     @Column(name = "task_description", nullable = false, columnDefinition = "TEXT")
     @JsonProperty("taskDescription")
-    var taskDescription: String
+    var taskDescription: String,
+
+    @Column(name = "date_created", nullable = false, columnDefinition = "TEXT")
+    @JsonProperty("dateCreated")
+    var dateCreated: Date = Date(System.currentTimeMillis()),
 ) {
 }

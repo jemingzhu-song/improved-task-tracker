@@ -1,6 +1,7 @@
 package traction.backend.model.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import traction.backend.model.Task
 
 class UserAccountEditDTO(
@@ -18,8 +19,11 @@ class UserAccountEditDTO(
 
     @JsonProperty("password")
     var password: String?,
-
-    @JsonProperty("tasks")
-    var tasks: Collection<Task>?
 ) {
+    init {
+        if (password != null) {
+            val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()
+            this.password = passwordEncoder.encode(password)
+        }
+    }
 }

@@ -1,31 +1,40 @@
 import { Button, Box, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+import { failedRequestLogger } from '../helper/RequestHelper';
+import { PostRequestBasic } from '../types/RequestTypes';
 
 export const LoginPage = () => {
+  const [cookies, setCookie] = useCookies();
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const loginRequest = async () => {
-    const loginDetails = {
-      email: email,
-      password: password,
-    };
+    let requestBody = new URLSearchParams();
+    requestBody.append('email', email);
+    requestBody.append('password', password);
 
-    const requestOptions = {
+    const requestOptions: PostRequestBasic = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         Accept: 'application/json',
       },
-      body: JSON.stringify(loginDetails),
+      body: requestBody,
     };
 
-    const response = await fetch('/auth/login', requestOptions);
+    const response = await fetch('/user/account/login', requestOptions);
 
     if (response.status === 200) {
-      console.log('Success');
+      setCookie('token', response.headers.get('token'));
+      setCookie('refreshToken', response.headers.get('refreshToken'));
+      setCookie('userId', response.headers.get('userId'));
+      navigate('/');
     } else {
-      console.log('/auth/login POST Request Failed');
+      failedRequestLogger('/user/account/login', 'POST', response);
+      alert('Login Failed. Incorrect Email or Password');
     }
   };
 

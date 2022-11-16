@@ -4,6 +4,8 @@ import { NavigationBar } from './components/NavigationBar';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { HomePage } from './pages/HomePage';
+import { AccountPage } from './pages/AccountPage';
+import { ReportPage } from './pages/ReportPage';
 
 function App() {
   const theme = createTheme({
@@ -42,6 +44,10 @@ function App() {
         fontSize: 18,
         fontWeight: 500,
       },
+      body2: {
+        fontSize: 18,
+        fontWeight: 700,
+      },
       subtitle1: {
         fontSize: 14,
         fontWeight: 500,
@@ -58,6 +64,8 @@ function App() {
             <Route path='/' element={<HomePage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/register' element={<RegisterPage />} />
+            <Route path='/account' element={<AccountPage />} />
+            <Route path='/report' element={<ReportPage />} />
           </Routes>
         </ThemeProvider>
       </Router>

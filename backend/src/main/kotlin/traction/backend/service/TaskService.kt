@@ -5,8 +5,10 @@ import traction.backend.datasource.TaskRepository
 import traction.backend.datasource.UserAccountRepository
 import traction.backend.model.Task
 import traction.backend.model.UserAccount
+import traction.backend.model.dto.RecentWeekTasksDTO
 import traction.backend.model.dto.TaskEditDTO
 import java.lang.IllegalStateException
+import java.util.Date
 import javax.transaction.Transactional
 
 @Service
@@ -23,11 +25,17 @@ class TaskService(
         return userAccount.tasks
     }
 
-    fun createUserTask(userId: Long, task: Task): Unit {
+    fun getRecentWeekUserTasks(userId: Long, recentWeekTasksDTO: RecentWeekTasksDTO): MutableList<Task> {
+        val afterDate: Date = Date(recentWeekTasksDTO.beforeDate.time - Date(604800000).time) // One week represented in milliseconds
+        return taskRepository.getRecentWeekTasksBeforeDate(recentWeekTasksDTO.beforeDate, afterDate)
+    }
+
+    fun createUserTask(userId: Long, task: Task): Task {
         var userAccount: UserAccount = userAccountRepository.findById(userId).orElseThrow {
             IllegalStateException("User with userId: $userId does not exist")
         }
         userAccount.tasks.add(task)
+        return task
     }
 
     fun editUserTask(userId: Long, taskEditDTO: TaskEditDTO): Unit {
@@ -52,6 +60,11 @@ class TaskService(
             IllegalStateException("User with userId: $userId does not exist")
         }
         var result: Boolean = userAccount.tasks.removeIf { it.taskId == taskId }
+        try {
+            taskRepository.deleteById(taskId)
+        } catch(e: Exception) {
+            throw java.lang.Exception("${e.message}")
+        }
         if (result == false) {
             throw IllegalStateException("Failed to remove task with taskId: $taskId from user with userId: $userId")
         }

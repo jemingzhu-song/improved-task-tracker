@@ -33,6 +33,11 @@ class UserAccount(
     @OneToMany(cascade = arrayOf(CascadeType.ALL))
     @JoinColumn(name = "user_id")
     var tasks: MutableList<Task>,
+
+    @JsonProperty("roles")
+    @ManyToMany(fetch = FetchType.EAGER)
+    var roles: MutableList<Role>
+
 ) {
     init {
         val passwordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder()

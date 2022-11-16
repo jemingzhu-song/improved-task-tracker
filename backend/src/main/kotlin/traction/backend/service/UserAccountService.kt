@@ -1,12 +1,15 @@
 package traction.backend.service
 
-import io.jsonwebtoken.JwtBuilder
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import net.bytebuddy.build.Plugin.Factory.Simple
 import org.apache.coyote.Response
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import traction.backend.datasource.UserAccountRepository
 import traction.backend.model.UserAccount
@@ -24,52 +27,18 @@ import javax.transaction.Transactional
 @Transactional
 class UserAccountService(
     private val userAccountRepository: UserAccountRepository
-) {
+): UserDetailsService {
 
-    fun loginUserAccount(loginDetails: LoginDTO, httpServletResponse: HttpServletResponse): UserAccount {
-        var userAccount: UserAccount = userAccountRepository.findUserAccountByEmail(loginDetails.email).orElseThrow {
-            IllegalStateException("User with email: ${loginDetails.email} does not exist")
+    override fun loadUserByUsername(email: String): UserDetails {
+        var userAccount: UserAccount = userAccountRepository.findUserAccountByEmail(email).orElseThrow {
+            IllegalStateException("User with email: $email does not exist")
         }
-        if (userAccount.comparePasswords(loginDetails.password)) {
-            var issuer: String = userAccount.userId.toString()
-            val jwt: String = Jwts.builder()
-                .setIssuer(issuer)
-                .setExpiration(Date((System.currentTimeMillis() + (60 * 10 * 1000)))) // 10 Minutes
-                .signWith(SignatureAlgorithm.HS256, "secretTpStoreAsEnvironmentVariable") // TODO: Store this secret as an Environment Variable
-                .compact()
 
-            val cookie = Cookie("token", jwt)
-            cookie.isHttpOnly = true
-            httpServletResponse.addCookie(cookie)
+        var authorities: MutableList<SimpleGrantedAuthority> = mutableListOf()
+        // Loop through all the roles of the user, and create a "SimpleGrantedAuthority" role
+        userAccount.roles.forEach { role -> authorities.add(SimpleGrantedAuthority(role.roleName)) }
 
-            return userAccount
-        } else {
-            throw FailedLoginException("Incorrect password. User Login Failed.")
-        }
-    }
-
-    fun logoutUserAccount(httpServletResponse: HttpServletResponse): ResponseEntity<Any> {
-        var cookie = Cookie("token", "")
-        cookie.maxAge = 0
-
-        httpServletResponse.addCookie(cookie)
-
-        return ResponseEntity.ok("Logout Success")
-    }
-
-    fun authenticateUser(token: String?): ResponseEntity<Any> {
-        if (token == null) {
-            throw FailedLoginException("Token invalid. Please login.")
-        }
-        try {
-
-            // TODO: Store this secret as an Environment Variable
-            val body = Jwts.parser().setSigningKey("secretTpStoreAsEnvironmentVariable").parseClaimsJws(token).body
-
-            return ResponseEntity.ok(userAccountRepository.findById(body.issuer.toLong()))
-        } catch(e: Exception) {
-            throw FailedLoginException("Token invalid. Please login.")
-        }
+        return User(userAccount.email, userAccount.password, authorities)
     }
 
     fun getUserAccountById(userId: Long): UserAccount {

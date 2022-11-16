@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import traction.backend.model.Task
+import traction.backend.model.dto.RecentWeekTasksDTO
 import traction.backend.model.dto.TaskEditDTO
 import traction.backend.service.TaskService
 import java.lang.IllegalArgumentException
@@ -39,8 +40,13 @@ class TaskController(
         return taskService.getAllUserTasks(userId)
     }
 
+    @PostMapping("/get/recent/week/{userId}")
+    fun getRecentWeekUserTasks(@PathVariable userId: Long, @RequestBody recentWeekTasksDTO: RecentWeekTasksDTO): MutableList<Task> {
+        return taskService.getRecentWeekUserTasks(userId, recentWeekTasksDTO)
+    }
+
     @PostMapping("/create/{userId}")
-    fun createUserTask(@PathVariable userId: Long, @RequestBody task: Task): Unit {
+    fun createUserTask(@PathVariable userId: Long, @RequestBody task: Task): Task {
         return taskService.createUserTask(userId, task)
     }
 

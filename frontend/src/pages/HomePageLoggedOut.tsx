@@ -32,6 +32,7 @@ export const HomePageLoggedOut = () => {
             taskDescription_prop={task.taskDescription}
             status_prop={task.status}
             deleteTask_prop={deleteTask}
+            editTask_prop={null}
           />
         );
       })}
