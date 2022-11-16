@@ -8,7 +8,9 @@ Note: This application has been Dockerised! Instructions to run this on your loc
 
 1. Make sure you have docker installed on your machine.
 2. In the root directory, run the command:
+
       > docker-compose up
+
 3. This will generate 3 containers:
     - "improved_task_tracker_frontend_c": Container for the frontend of this application
     - "improved_task_tracker_backend_c": Container for the backend of this application
